@@ -58,7 +58,6 @@ public class UF_HWQUPC_Test {
         Connections h = new UF_HWQUPC(2);
         h.connect(0, 1);
     }
-
     /**
      *
      */
