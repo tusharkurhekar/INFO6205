@@ -11,8 +11,18 @@ class ParSort {
 
     public static int cutoff = 1000;
 
-    public static void sort(int[] array, int from, int to) {
-        if (to - from < cutoff) Arrays.sort(array, from, to);
+    public static int count =0;
+
+    //implemented by tushar
+    public static int getCutoff() {
+        return cutoff;
+    }
+    public static void setCutoff(int cutoff) {
+        ParSort.cutoff = cutoff;
+    }
+
+    public static void sort(int[] array, int from, int to, int cutoff) {
+        if (to - from < ParSort.cutoff) Arrays.sort(array, from, to);
         else {
             // FIXME next few lines should be removed from public repo.
             CompletableFuture<int[]> parsort1 = parsort(array, from, from + (to - from) / 2); // TO IMPLEMENT
@@ -36,8 +46,18 @@ class ParSort {
                 return result;
             });
 
-            parsort.whenComplete((result, throwable) -> System.arraycopy(result, 0, array, from, result.length));
-//            System.out.println("# threads: "+ ForkJoinPool.commonPool().getRunningThreadCount());
+            parsort.whenComplete((result, throwable) -> {
+
+            //System.arraycopy(result, 0, array, from, result.length));
+            //System.out.println("# threads: " + ForkJoinPool.commonPool().getRunningThreadCount());
+
+            //implemented by tushar
+            int t=from;
+            for(int i=0; t<result.length;t++){
+                array[t]=result[t];
+                t++;
+            }
+            });
             parsort.join();
         }
     }
@@ -48,9 +68,27 @@ class ParSort {
                     int[] result = new int[to - from];
                     // TO IMPLEMENT
                     System.arraycopy(array, from, result, 0, result.length);
-                    sort(result, 0, to - from);
+
+                    //implemented by tushar
+                    sort(result, 0, to - from, getCutoff());
+                    int t=from;
+                    for(int i=0;i<result.length;i++)
+                    {
+                        // System.out.println(result[i]);
+                        result[i]=array[t];
+                        t++;
+                        //System.out.println(i);
+                    }
                     return result;
                 }
         );
+    }
+
+    //implemented by tushar
+    public static boolean less(int i, int j) {
+        if (i <= j) {         //System.out.println(i);
+            return true;
+        } else
+            return false;
     }
 }
